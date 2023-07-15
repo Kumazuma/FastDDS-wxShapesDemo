@@ -1,0 +1,265 @@
+<?xml version="1.0"?>
+<wxUiEditorData
+  data_version="16">
+  <node
+    class="Project"
+    art_directory="../ShapesDemo">
+    <node
+      class="wxFrame"
+      class_name="ShapesDemoFrameBase"
+      base_file="ShapesDemoFrameBase"
+      derived_class_name="ShapeDemoFrame"
+      derived_file="shapedemoframe"
+      size="300,300d">
+      <node
+        class="wxToolBar"
+        style="wxTB_HORIZONTAL|wxTB_HORZ_TEXT">
+        <node
+          class="tool"
+          bitmap="SVG;../resource/pub.svg;[24,24]"
+          id="ID_PUBLISH"
+          label="Publish"
+          tooltip="Create DataWriter"
+          var_name="m_toolPub" />
+        <node
+          class="tool"
+          bitmap="SVG;../resource/sub.svg;[24,24]"
+          id="ID_SUBSCRIBE"
+          label="Subscribe"
+          var_name="m_toolSub" />
+        <node
+          class="Check3State"
+          label="Publish All" />
+      </node>
+      <node
+        class="wxStatusBar" />
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL">
+        <node
+          class="wxPanel"
+          class_access="protected:"
+          var_name="m_panel"
+          derived_class="CanvasPanel"
+          derived_header="CanvasPanel.h"
+          id="ID_CANVAS"
+          minimum_size="472,532"
+          window_style="wxTAB_TRAVERSAL|wxFULL_REPAINT_ON_RESIZE" />
+      </node>
+    </node>
+    <node
+      class="wxDialog"
+      class_name="PublicationDialogBase"
+      title="Publication"
+      base_file="PublicationDialogBase"
+      derived_class_name="PublicationDialog"
+      derived_file="publicationdialog">
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL"
+        var_name="dlg_sizer"
+        flags="wxEXPAND">
+        <node
+          class="wxBoxSizer"
+          flags="wxEXPAND">
+          <node
+            class="wxStaticBoxSizer"
+            label="Color">
+            <node
+              class="wxRadioButton"
+              checked="1"
+              label="RED"
+              var_name="m_radioRed"
+              id="ID_CHK_RED" />
+            <node
+              class="wxRadioButton"
+              label="GREEN"
+              var_name="m_radioGreen"
+              id="ID_CHK_GREEN" />
+            <node
+              class="wxRadioButton"
+              label="BLUE"
+              var_name="m_radioBlue"
+              id="ID_CHK_BLUE" />
+            <node
+              class="wxRadioButton"
+              label="CYAN"
+              var_name="m_radioCyan"
+              id="ID_CHK_CYAN" />
+            <node
+              class="wxRadioButton"
+              label="MAGENTA"
+              var_name="m_radioMagenta"
+              id="ID_CHK_MAGENTA" />
+            <node
+              class="wxRadioButton"
+              label="YELLOW"
+              var_name="m_radioYellow"
+              id="ID_CHK_YELLOW" />
+            <node
+              class="wxRadioButton"
+              label="PURPLE"
+              var_name="m_radioPurple"
+              id="ID_CHK_PURPLE" />
+            <node
+              class="wxRadioButton"
+              label="ORANGE"
+              var_name="m_radioOrange"
+              id="ID_CHK_ORANGE" />
+          </node>
+          <node
+            class="wxBoxSizer"
+            orientation="wxVERTICAL"
+            var_name="box_sizer_2"
+            borders=""
+            flags="wxEXPAND">
+            <node
+              class="wxStaticBoxSizer"
+              label="Shape"
+              var_name="static_box_2"
+              flags="wxEXPAND">
+              <node
+                class="wxRadioButton"
+                checked="1"
+                label="Circle"
+                var_name="m_radioCircle"
+                id="ID_CHK_CIRCLE" />
+              <node
+                class="wxRadioButton"
+                label="Triangle"
+                var_name="m_radioTriangle"
+                id="ID_CHK_TRIANGLE" />
+              <node
+                class="wxRadioButton"
+                label="Square"
+                var_name="m_radioSquare"
+                id="ID_CHK_SQUARE" />
+            </node>
+            <node
+              class="wxStaticBoxSizer"
+              label="Size"
+              var_name="static_box_3"
+              flags="wxEXPAND">
+              <node
+                class="wxSpinCtrl"
+                max="300"
+                var_name="m_spinSize"
+                flags="wxEXPAND" />
+            </node>
+          </node>
+          <node
+            class="wxStaticBoxSizer"
+            label="Partition"
+            var_name="static_box_4">
+            <node
+              class="wxCheckBox"
+              label="*"
+              id="ID_CHK_ALL" />
+            <node
+              class="wxCheckBox"
+              label="A"
+              var_name="m_checkBox_2"
+              id="ID_CHK_A" />
+            <node
+              class="wxCheckBox"
+              label="B"
+              var_name="m_checkBox_3"
+              id="ID_CHK_B" />
+            <node
+              class="wxCheckBox"
+              label="C"
+              var_name="m_checkBox_4"
+              id="ID_CHK_C" />
+            <node
+              class="wxCheckBox"
+              label="D"
+              var_name="m_checkBox_5"
+              id="ID_CHK_D" />
+          </node>
+        </node>
+        <node
+          class="wxStdDialogButtonSizer"
+          flags="wxEXPAND" />
+      </node>
+    </node>
+    <node
+      class="wxDialog"
+      class_name="SubscriptionDialogBase"
+      title="Subscription"
+      base_file="SubscriptionDialogBase"
+      derived_class_name="PublicationDialog_copy"
+      derived_file="publicationdialog_copy">
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL"
+        var_name="dlg_sizer"
+        flags="wxEXPAND">
+        <node
+          class="wxBoxSizer"
+          flags="wxEXPAND">
+          <node
+            class="wxBoxSizer"
+            orientation="wxVERTICAL"
+            var_name="box_sizer_2"
+            borders=""
+            flags="wxEXPAND">
+            <node
+              class="wxStaticBoxSizer"
+              label="Shape"
+              var_name="static_box_2"
+              flags="wxEXPAND">
+              <node
+                class="wxRadioButton"
+                checked="1"
+                label="Circle"
+                var_name="m_radioCircle"
+                id="ID_CHK_CIRCLE" />
+              <node
+                class="wxRadioButton"
+                label="Triangle"
+                var_name="m_radioTriangle"
+                id="ID_CHK_TRIANGLE" />
+              <node
+                class="wxRadioButton"
+                label="Square"
+                var_name="m_radioSquare"
+                id="ID_CHK_SQUARE" />
+            </node>
+          </node>
+          <node
+            class="wxStaticBoxSizer"
+            label="Partition"
+            var_name="static_box_4">
+            <node
+              class="wxCheckBox"
+              label="*"
+              id="ID_CHK_ALL" />
+            <node
+              class="wxCheckBox"
+              label="A"
+              var_name="m_checkBox_2"
+              id="ID_CHK_A" />
+            <node
+              class="wxCheckBox"
+              label="B"
+              var_name="m_checkBox_3"
+              id="ID_CHK_B" />
+            <node
+              class="wxCheckBox"
+              label="C"
+              var_name="m_checkBox_4"
+              id="ID_CHK_C" />
+            <node
+              class="wxCheckBox"
+              label="D"
+              var_name="m_checkBox_5"
+              id="ID_CHK_D" />
+          </node>
+        </node>
+        <node
+          class="wxStdDialogButtonSizer"
+          flags="wxEXPAND" />
+      </node>
+    </node>
+  </node>
+</wxUiEditorData>
