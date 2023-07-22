@@ -13,13 +13,13 @@ class Controller
 {
 public:
 	void Init(int domainId);
-	
-	void CreateDataWriter(
+
+	std::optional<eprosima::fastrtps::rtps::GUID_t> CreateDataWriter(
 		ShapeKind shapeKind,
 		const eprosima::fastdds::dds::DataWriterQos& qos,
 		uint8_t partitions, const wxString& color);
 
-	void CreateDataReader(
+	std::optional<eprosima::fastrtps::rtps::GUID_t> CreateDataReader(
 		ShapeKind shapeKind,
 		const eprosima::fastdds::dds::DataReaderQos& qos,
 		uint8_t partitions,
@@ -41,23 +41,3 @@ private:
 	std::vector<eprosima::fastdds::dds::DataWriter*> m_writers;
 	std::vector<Subscriber*> m_readers;
 };
-
-//namespace std
-//{
-//	template<>
-//	struct hash<eprosima::fastrtps::rtps::GUID_t>
-//	{
-//		using TKey = eprosima::fastrtps::rtps::GUID_t;
-//		size_t operator()(const TKey& key) const noexcept
-//		{
-//			size_t ret = 0;
-//			const auto size = reinterpret_cast<const size_t*>(&key);
-//			for(int i = 0; i < sizeof(key) / sizeof(size_t); ++i)
-//			{
-//				ret ^= size[i];
-//			}
-//
-//			return ret;
-//		}
-//	};
-//}

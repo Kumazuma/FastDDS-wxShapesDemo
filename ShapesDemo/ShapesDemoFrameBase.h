@@ -10,9 +10,14 @@
 #pragma once
 
 #include <wx/checkbox.h>
+#include <wx/colour.h>
+#include <wx/dataview.h>
 #include <wx/frame.h>
 #include <wx/gdicmn.h>
+#include <wx/notebook.h>
 #include <wx/panel.h>
+#include <wx/settings.h>
+#include <wx/splitter.h>
 #include <wx/statusbr.h>
 #include <wx/toolbar.h>
 
@@ -37,7 +42,8 @@ public:
     {
         ID_CANVAS = wxID_HIGHEST + 1,
         ID_PUBLISH,
-        ID_SUBSCRIBE
+        ID_SUBSCRIBE,
+        ID_VIEW_ENDPOINTS
     };
 
 protected:
@@ -46,6 +52,9 @@ protected:
 
     CanvasPanel* m_panel;
     wxCheckBox* m_checkBox;
+    wxDataViewListCtrl* m_dataViewListCtrl;
+    wxNotebook* m_notebook;
+    wxSplitterWindow* m_splitter;
     wxStatusBar* m_statusBar;
     wxToolBar* m_toolBar;
 };

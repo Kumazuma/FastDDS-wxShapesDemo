@@ -37,14 +37,95 @@
         class="wxBoxSizer"
         orientation="wxVERTICAL">
         <node
-          class="wxPanel"
-          class_access="protected:"
-          var_name="m_panel"
-          derived_class="CanvasPanel"
-          derived_header="CanvasPanel.h"
-          id="ID_CANVAS"
-          minimum_size="472,532"
-          window_style="wxTAB_TRAVERSAL|wxFULL_REPAINT_ON_RESIZE" />
+          class="wxSplitterWindow"
+          splitmode="wxSPLIT_HORIZONTAL"
+          flags="wxEXPAND"
+          proportion="1">
+          <node
+            class="wxPanel"
+            window_style="wxTAB_TRAVERSAL">
+            <node
+              class="wxFlexGridSizer"
+              cols="3"
+              rows="3"
+              growablecols="1"
+              growablerows="1">
+              <node
+                class="spacer" />
+              <node
+                class="spacer" />
+              <node
+                class="spacer" />
+              <node
+                class="spacer" />
+              <node
+                class="wxPanel"
+                class_access="protected:"
+                var_name="m_panel"
+                background_colour="wxSYS_COLOUR_WINDOW"
+                derived_class="CanvasPanel"
+                derived_header="CanvasPanel.h"
+                id="ID_CANVAS"
+                minimum_size="472,532"
+                window_style="wxBORDER_THEME|wxFULL_REPAINT_ON_RESIZE"
+                alignment="wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL" />
+              <node
+                class="spacer" />
+              <node
+                class="spacer" />
+              <node
+                class="spacer" />
+              <node
+                class="spacer" />
+            </node>
+          </node>
+          <node
+            class="wxNotebook"
+            window_style="wxBORDER_THEME">
+            <node
+              class="BookPage"
+              label="Endpoints"
+              background_colour="wxSYS_COLOUR_BTNFACE"
+              window_style="wxTAB_TRAVERSAL">
+              <node
+                class="wxBoxSizer"
+                orientation="wxVERTICAL"
+                var_name="page_sizer">
+                <node
+                  class="wxDataViewListCtrl"
+                  id="ID_VIEW_ENDPOINTS"
+                  flags="wxEXPAND"
+                  proportion="1">
+                  <node
+                    class="dataViewListColumn"
+                    class_access="none"
+                    label="Type"
+                    var_name="colum1" />
+                  <node
+                    class="dataViewListColumn"
+                    class_access="none"
+                    label="GUID"
+                    var_name="dataViewListColumn_5" />
+                  <node
+                    class="dataViewListColumn"
+                    class_access="none"
+                    label="Topic"
+                    var_name="dataViewListColumn_2" />
+                  <node
+                    class="dataViewListColumn"
+                    class_access="none"
+                    label="Color"
+                    var_name="dataViewListColumn_3" />
+                  <node
+                    class="dataViewListColumn"
+                    class_access="none"
+                    label="Reliability"
+                    var_name="dataViewListColumn_4" />
+                </node>
+              </node>
+            </node>
+          </node>
+        </node>
       </node>
     </node>
     <node
@@ -259,6 +340,44 @@
         <node
           class="wxStdDialogButtonSizer"
           flags="wxEXPAND" />
+      </node>
+    </node>
+    <node
+      class="wxDialog"
+      class_name="ReaderSampleListDialogBase"
+      style="wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER"
+      minimum_size="240,240d"
+      base_file="ReaderSampleListDialogBase"
+      derived_class_name="ReaderSampleListDialog"
+      derived_file="readersamplelistdialog">
+      <node
+        class="wxBoxSizer"
+        orientation="wxVERTICAL"
+        var_name="dlg_sizer">
+        <node
+          class="wxDataViewCtrl"
+          id="ID_DATAVIEW"
+          flags="wxEXPAND"
+          proportion="1">
+          <node
+            class="dataViewColumn"
+            label="Color" />
+          <node
+            class="dataViewColumn"
+            label="ShapeSize"
+            model_column="1"
+            var_name="m_dataViewColumn_2" />
+          <node
+            class="dataViewColumn"
+            label="X"
+            model_column="2"
+            var_name="m_dataViewColumn_3" />
+          <node
+            class="dataViewColumn"
+            label="Y"
+            model_column="3"
+            var_name="m_dataViewColumn_4" />
+        </node>
       </node>
     </node>
   </node>

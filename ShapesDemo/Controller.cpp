@@ -22,10 +22,11 @@ void Controller::Init(int domainId)
 	m_pTopicCircle = m_pDomainParticipant->create_topic("Circle", typeName, topicQos);
 	m_pTopicTriangle = m_pDomainParticipant->create_topic("Triangle", typeName, topicQos);
 	m_pTopicSquare = m_pDomainParticipant->create_topic("Square", typeName, topicQos);
-
 }
 
-void Controller::CreateDataWriter(ShapeKind shapeKind, const eprosima::fastdds::dds::DataWriterQos& qos, uint8_t partitions, const wxString& color)
+std::optional<eprosima::fastrtps::rtps::GUID_t> Controller::CreateDataWriter(
+	ShapeKind shapeKind, const eprosima::fastdds::dds::DataWriterQos& qos,
+	uint8_t partitions, const wxString& color)
 {
 	eprosima::fastdds::dds::Publisher* pPublisher;
 	auto it = m_publisherTable.find(partitions);
@@ -79,9 +80,36 @@ void Controller::CreateDataWriter(ShapeKind shapeKind, const eprosima::fastdds::
 	auto& model = app.GetModel();
 	SendingShape shape{ color, 30, {CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2}, {0.f, 0.f} };
 	model.sendingShapes.emplace( instanceHandle, std::make_tuple(shapeKind, shape));
+	auto it2 = model.entityInfoTable.emplace(instanceHandle, EntityInfo{});
+	auto& entity = it2.first->second;
+	entity.color = color;
+	entity.entityType = wxS("Pub");
+	entity.guid = instanceHandle;
+
+	switch(shapeKind)
+	{
+	case ShapeKind::Circle:
+		entity.topic = wxS("Circle");
+		break;
+
+	case ShapeKind::Square:
+		entity.topic = wxS("Square");
+		break;
+
+	case ShapeKind::Triangle:
+		entity.topic = wxS("Triangle");
+		break;
+
+	}
+
+	entity.reliability = qos.reliability().kind == eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS ?
+		wxS("BEST_EFFORT") :
+		wxS("RELIABLE");
+	
+	return instanceHandle;
 }
 
-void Controller::CreateDataReader(ShapeKind shapeKind, const eprosima::fastdds::dds::DataReaderQos& qos, uint8_t partitions, bool isContentFiltered, bool useTake)
+std::optional<eprosima::fastrtps::rtps::GUID_t> Controller::CreateDataReader(ShapeKind shapeKind, const eprosima::fastdds::dds::DataReaderQos& qos, uint8_t partitions, bool isContentFiltered, bool useTake)
 {
 	eprosima::fastdds::dds::Subscriber* pSubscriber;
 	auto it = m_subscriberTable.find(partitions);
@@ -128,14 +156,39 @@ void Controller::CreateDataReader(ShapeKind shapeKind, const eprosima::fastdds::
 		break;
 	}
 
-	auto d = qos;
-	d.history().depth = 16;
-	auto dr = pSubscriber->create_datareader(pTopic, d);
+	auto dr = pSubscriber->create_datareader(pTopic, qos);
 	m_readers.push_back(new Subscriber(shapeKind, dr, useTake));
 	auto instanceHandle = eprosima::fastrtps::rtps::iHandle2GUID(dr->get_instance_handle());
 	auto& app = wxGetApp();
 	auto& model = app.GetModel();
 	model.receivedShapeTable.emplace(instanceHandle, std::make_tuple(shapeKind, std::vector<ReceivedShape>{ }));
+	auto it2 = model.entityInfoTable.emplace(instanceHandle, EntityInfo{});
+	auto& entity = it2.first->second;
+	entity.color = wxS("*");
+	entity.entityType = wxS("Sub");
+	entity.guid = instanceHandle;
+
+	switch(shapeKind)
+	{
+	case ShapeKind::Circle:
+		entity.topic = wxS("Circle");
+		break;
+
+	case ShapeKind::Square:
+		entity.topic = wxS("Square");
+		break;
+
+	case ShapeKind::Triangle:
+		entity.topic = wxS("Triangle");
+		break;
+
+	}
+
+	entity.reliability = qos.reliability().kind == eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS ?
+		wxS("BEST_EFFORT") :
+		wxS("RELIABLE");
+	
+	return instanceHandle;
 }
 
 void Controller::Update(float timeDelta)
@@ -232,7 +285,6 @@ void Controller::Update(float timeDelta)
 				XMVECTOR d = XMVectorMultiply(d5, direction);
 				relativePos = XMVectorAdd(relativePos, d);
 			}
-
 	
 			plainVector = XMVector2Normalize(plainVector);
 			power = XMVector2Reflect(power, plainVector);
@@ -255,7 +307,6 @@ void Controller::Update(float timeDelta)
 	{
 		guid = m_latestGrabbedGuid;
 		m_latestGrabbedGuid = {};
-		// TODO: Calculate power
 		auto it = model.sendingShapes.find(guid);
 		if(it != model.sendingShapes.end())
 		{

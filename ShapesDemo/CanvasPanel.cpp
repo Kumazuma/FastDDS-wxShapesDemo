@@ -95,6 +95,8 @@ void CanvasPanel::OnPoint(wxPaintEvent&)
 		}
 	}
 
+	
+	wxPen pen(wxColor(0, 0, 0), 3);
 	for(auto& it: model.sendingShapes)
 	{
 		auto& shape = std::get<1>(it.second);

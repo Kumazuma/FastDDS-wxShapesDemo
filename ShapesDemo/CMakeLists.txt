@@ -6,8 +6,8 @@ find_program(fastddsgen NAMES fastddsgen.bat REQUIRED)
 
 # 이 프로젝트의 실행 파일에 소스를 추가합니다.
 set(GENERATED_SOURCE_FILES "Shape.h" "Shape.cxx" "ShapePubSubTypes.h" "ShapePubSubTypes.cxx" "ShapesDemoFrameBase.h" "ShapesDemoFrameBase.cpp" "PublicationDialogBase.h" "PublicationDialogBase.cpp"
- "SubscriptionDialogBase.h" "SubscriptionDialogBase.cpp")
-add_executable (ShapesDemo WIN32 ${GENERATED_SOURCE_FILES} "ShapesDemo.cpp" "ShapesDemo.h" "Model.h" "Model.cpp" "Controller.h" "Controller.cpp" "ShapesDemoFrame.h" "ShapesDemoFrame.cpp" "CanvasPanel.h" "CanvasPanel.cpp" "resource.rc" "Subscriber.h" "Subscriber.cpp" "PublicationDialog.h" "PublicationDialog.cpp" "SubscriptionDialog.h" "SubscriptionDialog.cpp")
+ "SubscriptionDialogBase.h" "SubscriptionDialogBase.cpp" "ReaderSampleListDialogBase.h" "ReaderSampleListDialogBase.cpp")
+add_executable (ShapesDemo WIN32 ${GENERATED_SOURCE_FILES} "ShapesDemo.cpp" "ShapesDemo.h" "Model.h" "Model.cpp" "Controller.h" "Controller.cpp" "ShapesDemoFrame.h" "ShapesDemoFrame.cpp" "CanvasPanel.h" "CanvasPanel.cpp" "resource.rc" "Subscriber.h" "Subscriber.cpp" "PublicationDialog.h" "PublicationDialog.cpp" "SubscriptionDialog.h" "SubscriptionDialog.cpp" "ReaderSampleListDialog.h" "ReaderSampleListDialog.cpp")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET ShapesDemo PROPERTY CXX_STANDARD 20)

@@ -16,7 +16,16 @@ bool ShapesDemoApp::OnInit()
 	m_controller.Init(0);
 	m_pFrame = new ShapesDemoFrame();
 	m_pFrame->Show();
-	m_pFrame->Bind(wxEVT_CLOSE_WINDOW, [this](wxCloseEvent& event) {event.Skip(); m_pFrame = nullptr;});
+	m_pFrame->Bind(wxEVT_CLOSE_WINDOW, [this](wxCloseEvent& event)
+	{
+		event.Skip();
+		if(m_pTimer != nullptr)
+		{
+			m_pTimer->Stop();
+		}
+
+		m_pFrame = nullptr;
+	});
 	m_pTimer = new wxTimer(this);
 	m_pTimer->Start(16);
 	Bind(wxEVT_TIMER, &ShapesDemoApp::OnTimer, this);
@@ -25,8 +34,11 @@ bool ShapesDemoApp::OnInit()
 
 int ShapesDemoApp::OnExit()
 {
-	m_pTimer->Stop();
-	delete m_pTimer;
+	if(m_pTimer != nullptr)
+	{
+		delete m_pTimer;
+	}
+	
 	int ret = wxApp::OnExit();
 	m_controller.Shutdown();
 	return ret;
@@ -48,9 +60,6 @@ void ShapesDemoApp::OnTimer(wxTimerEvent&)
 		return;
 
 	m_controller.Update(16.f / 1000.f);
-	auto window = wxWindow::FindWindowById(ShapesDemoFrame::ID_CANVAS, m_pFrame);
-	if(window == nullptr)
-		return;
+	m_pFrame->UpdateView();
 
-	window->Refresh();
 }

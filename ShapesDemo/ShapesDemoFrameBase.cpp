@@ -69,10 +69,71 @@ bool ShapesDemoFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString
 
     auto* box_sizer = new wxBoxSizer(wxVERTICAL);
 
-    m_panel = new CanvasPanel(this, ID_CANVAS, wxDefaultPosition, wxDefaultSize,
-        wxTAB_TRAVERSAL|wxFULL_REPAINT_ON_RESIZE);
+    m_splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D);
+    m_splitter->SetSashGravity(0.0);
+    m_splitter->SetMinimumPaneSize(150);
+    box_sizer->Add(m_splitter, wxSizerFlags(1).Expand().Border(wxALL));
+
+    auto* panel = new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+
+    auto* flex_grid_sizer = new wxFlexGridSizer(3, 3, 0, 0);
+    {
+        flex_grid_sizer->AddGrowableCol(1);
+        flex_grid_sizer->AddGrowableRow(1);
+    }
+
+    flex_grid_sizer->AddSpacer(0);
+
+    flex_grid_sizer->AddSpacer(0);
+
+    flex_grid_sizer->AddSpacer(0);
+
+    flex_grid_sizer->AddSpacer(0);
+
+    m_panel = new CanvasPanel(panel, ID_CANVAS, wxDefaultPosition, wxDefaultSize,
+        wxBORDER_THEME|wxFULL_REPAINT_ON_RESIZE);
     m_panel->SetMinSize(wxSize(472, 532));
-    box_sizer->Add(m_panel, wxSizerFlags().Border(wxALL));
+    m_panel->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+    flex_grid_sizer->Add(m_panel, wxSizerFlags().Center().Border(wxALL));
+
+    flex_grid_sizer->AddSpacer(0);
+
+    flex_grid_sizer->AddSpacer(0);
+
+    flex_grid_sizer->AddSpacer(0);
+
+    flex_grid_sizer->AddSpacer(0);
+
+    panel->SetSizerAndFit(flex_grid_sizer);
+
+    m_notebook = new wxNotebook(m_splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_THEME);
+
+    auto* page = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+    m_notebook->AddPage(page, "Endpoints");
+    page->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
+
+    auto* page_sizer = new wxBoxSizer(wxVERTICAL);
+
+    m_dataViewListCtrl = new wxDataViewListCtrl(page, ID_VIEW_ENDPOINTS);
+    page_sizer->Add(m_dataViewListCtrl, wxSizerFlags(1).Expand().Border(wxALL));
+
+    auto* colum1 = m_dataViewListCtrl->AppendTextColumn("Type", wxDATAVIEW_CELL_INERT, -1,
+        static_cast<wxAlignment>(wxALIGN_LEFT), wxDATAVIEW_COL_RESIZABLE);
+
+    auto* dataViewListColumn_5 = m_dataViewListCtrl->AppendTextColumn("GUID", wxDATAVIEW_CELL_INERT, -1,
+        static_cast<wxAlignment>(wxALIGN_LEFT), wxDATAVIEW_COL_RESIZABLE);
+
+    auto* dataViewListColumn_2 = m_dataViewListCtrl->AppendTextColumn("Topic", wxDATAVIEW_CELL_INERT, -1,
+        static_cast<wxAlignment>(wxALIGN_LEFT), wxDATAVIEW_COL_RESIZABLE);
+
+    auto* dataViewListColumn_3 = m_dataViewListCtrl->AppendTextColumn("Color", wxDATAVIEW_CELL_INERT, -1,
+        static_cast<wxAlignment>(wxALIGN_LEFT), wxDATAVIEW_COL_RESIZABLE);
+
+    auto* dataViewListColumn_4 = m_dataViewListCtrl->AppendTextColumn("Reliability", wxDATAVIEW_CELL_INERT, -1,
+        static_cast<wxAlignment>(wxALIGN_LEFT), wxDATAVIEW_COL_RESIZABLE);
+    page->SetSizerAndFit(page_sizer);
+
+    m_splitter->SplitHorizontally(panel, m_notebook);
     SetSizerAndFit(box_sizer);
 
 
