@@ -40,8 +40,13 @@ void ShapesDemoFrame::OnClickedPublish(wxCommandEvent&)
 	auto color = dialog.GetColor();
 	auto partition = dialog.GetPartition();
 	auto shapeKind = dialog.GetShapeKind();
+	auto reliabilityKind = dialog.GetReliabilityKind();
 	auto& controller = wxGetApp().GetController();
-	auto ret = controller.CreateDataWriter(shapeKind, eprosima::fastdds::dds::DATAWRITER_QOS_DEFAULT, partition, color);
+	
+	auto dwQos = eprosima::fastdds::dds::DATAWRITER_QOS_DEFAULT;
+	dwQos.reliability().kind = reliabilityKind;
+
+	auto ret = controller.CreateDataWriter(shapeKind, dwQos, partition, color);
 	if(!ret.has_value())
 	{
 		return;
@@ -84,9 +89,10 @@ void ShapesDemoFrame::OnClickedSubscribe(wxCommandEvent&)
 
 	auto partition = dialog.GetPartition();
 	auto shapeKind = dialog.GetShapeKind();
+	auto reliabilityKind = dialog.GetReliabilityKind();
 	auto& controller = wxGetApp().GetController();
 	auto qos = eprosima::fastdds::dds::DATAREADER_QOS_DEFAULT;
-	qos.reliability().kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
+	qos.reliability().kind = reliabilityKind;
 	qos.history().depth = 100;
 
 	auto ret =controller.CreateDataReader(shapeKind, qos, partition, false, false);

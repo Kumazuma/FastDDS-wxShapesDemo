@@ -1,5 +1,7 @@
 ﻿#include "PublicationDialog.h"
 
+#include <fastrtps/qos/QosPolicies.h>
+
 #include "Model.h"
 
 BEGIN_EVENT_TABLE(PublicationDialog, wxDialog)
@@ -19,6 +21,8 @@ EVT_CHECKBOX(ID_CHK_D, PublicationDialog::OnChkPartition)
 EVT_RADIOBUTTON(ID_CHK_CIRCLE, PublicationDialog::OnRadioShapeKind)
 EVT_RADIOBUTTON(ID_CHK_TRIANGLE, PublicationDialog::OnRadioShapeKind)
 EVT_RADIOBUTTON(ID_CHK_SQUARE, PublicationDialog::OnRadioShapeKind)
+EVT_RADIOBUTTON(ID_CHK_BEST_EFFORT, PublicationDialog::OnRadioReliability)
+EVT_RADIOBUTTON(ID_CHK_RELIABLE, PublicationDialog::OnRadioReliability)
 END_EVENT_TABLE()
 
 PublicationDialog::PublicationDialog(wxWindow* parent)
@@ -26,6 +30,7 @@ PublicationDialog::PublicationDialog(wxWindow* parent)
 	, m_shapeKind(ShapeKind::Circle)
 	, m_partition()
 	, m_selectedColor(wxS("RED"))
+	, m_reliabilityKind(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
 {
 
 }
@@ -43,6 +48,11 @@ ShapeKind PublicationDialog::GetShapeKind() const
 uint8_t PublicationDialog::GetPartition() const
 {
 	return m_partition;
+}
+
+ReliabilityQosPolicyKind PublicationDialog::GetReliabilityKind() const
+{
+	return m_reliabilityKind;
 }
 
 void PublicationDialog::OnRadioColor(wxCommandEvent& event)
@@ -103,5 +113,20 @@ void PublicationDialog::OnRadioShapeKind(wxCommandEvent& event)
 	case ID_CHK_SQUARE:
 		m_shapeKind = ShapeKind::Square;
 		break;
+	}
+}
+
+void PublicationDialog::OnRadioReliability(wxCommandEvent& event)
+{
+	switch(event.GetId())
+	{
+	case ID_CHK_BEST_EFFORT:
+		m_reliabilityKind = eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS;
+		break;
+
+	case ID_CHK_RELIABLE:
+		m_reliabilityKind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
+		break;
+
 	}
 }

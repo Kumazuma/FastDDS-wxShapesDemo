@@ -35,6 +35,7 @@ public:
         ID_CHK_A = wxID_HIGHEST + 1,
         ID_CHK_ALL,
         ID_CHK_B,
+        ID_CHK_BEST_EFFORT,
         ID_CHK_BLUE,
         ID_CHK_C,
         ID_CHK_CIRCLE,
@@ -45,6 +46,7 @@ public:
         ID_CHK_ORANGE,
         ID_CHK_PURPLE,
         ID_CHK_RED,
+        ID_CHK_RELIABLE,
         ID_CHK_SQUARE,
         ID_CHK_TRIANGLE,
         ID_CHK_YELLOW
@@ -60,6 +62,8 @@ protected:
     wxCheckBox* m_checkBox_4;
     wxCheckBox* m_checkBox_5;
     wxRadioButton* m_radioBlue;
+    wxRadioButton* m_radioBtn;
+    wxRadioButton* m_radioBtn_2;
     wxRadioButton* m_radioCircle;
     wxRadioButton* m_radioCyan;
     wxRadioButton* m_radioGreen;

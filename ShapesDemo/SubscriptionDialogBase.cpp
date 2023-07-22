@@ -62,6 +62,21 @@ bool SubscriptionDialogBase::Create(wxWindow* parent, wxWindowID id, const wxStr
 
     dlg_sizer->Add(box_sizer, wxSizerFlags().Expand().Border(wxALL));
 
+    auto* box_sizer_3 = new wxBoxSizer(wxHORIZONTAL);
+
+    auto* static_box_5 = new wxStaticBoxSizer(wxVERTICAL, this, "Reliability");
+
+    m_radioBtn = new wxRadioButton(static_box_5->GetStaticBox(), ID_CHK_BEST_EFFORT, "BEST_EFFORT");
+    static_box_5->Add(m_radioBtn, wxSizerFlags().Border(wxALL));
+
+    m_radioBtn_2 = new wxRadioButton(static_box_5->GetStaticBox(), ID_CHK_RELIABLE, "RELIABLE");
+    m_radioBtn_2->SetValue(true);
+    static_box_5->Add(m_radioBtn_2, wxSizerFlags().Border(wxALL));
+
+    box_sizer_3->Add(static_box_5, wxSizerFlags().Border(wxALL));
+
+    dlg_sizer->Add(box_sizer_3, wxSizerFlags().Expand().Border(wxALL));
+
     auto* stdBtn = CreateStdDialogButtonSizer(wxOK|wxCANCEL);
     dlg_sizer->Add(CreateSeparatedSizer(stdBtn), wxSizerFlags().Expand().Border(wxALL));
 

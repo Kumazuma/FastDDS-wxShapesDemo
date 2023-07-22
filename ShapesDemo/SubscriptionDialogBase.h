@@ -34,9 +34,11 @@ public:
         ID_CHK_A = wxID_HIGHEST + 1,
         ID_CHK_ALL,
         ID_CHK_B,
+        ID_CHK_BEST_EFFORT,
         ID_CHK_C,
         ID_CHK_CIRCLE,
         ID_CHK_D,
+        ID_CHK_RELIABLE,
         ID_CHK_SQUARE,
         ID_CHK_TRIANGLE
     };
@@ -50,6 +52,8 @@ protected:
     wxCheckBox* m_checkBox_3;
     wxCheckBox* m_checkBox_4;
     wxCheckBox* m_checkBox_5;
+    wxRadioButton* m_radioBtn;
+    wxRadioButton* m_radioBtn_2;
     wxRadioButton* m_radioCircle;
     wxRadioButton* m_radioSquare;
     wxRadioButton* m_radioTriangle;

@@ -37,6 +37,10 @@ protected:
 
     // Class member variables
 
+    wxDataViewColumn* m_dataViewColumn;
+    wxDataViewColumn* m_dataViewColumn_2;
+    wxDataViewColumn* m_dataViewColumn_3;
+    wxDataViewColumn* m_dataViewColumn_4;
     wxDataViewCtrl* m_dataViewCtrl;
 };
 

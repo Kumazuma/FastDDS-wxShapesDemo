@@ -136,7 +136,6 @@ bool ShapesDemoFrameBase::Create(wxWindow* parent, wxWindowID id, const wxString
     m_splitter->SplitHorizontally(panel, m_notebook);
     SetSizerAndFit(box_sizer);
 
-
     Centre(wxBOTH);
 
     return true;

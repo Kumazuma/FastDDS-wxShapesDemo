@@ -259,6 +259,26 @@
           </node>
         </node>
         <node
+          class="wxBoxSizer"
+          var_name="box_sizer_3"
+          flags="wxEXPAND">
+          <node
+            class="wxStaticBoxSizer"
+            label="Reliability"
+            var_name="static_box_5">
+            <node
+              class="wxRadioButton"
+              label="BEST_EFFORT"
+              id="ID_CHK_BEST_EFFORT" />
+            <node
+              class="wxRadioButton"
+              checked="1"
+              label="RELIABLE"
+              var_name="m_radioBtn_2"
+              id="ID_CHK_RELIABLE" />
+          </node>
+        </node>
+        <node
           class="wxStdDialogButtonSizer"
           flags="wxEXPAND" />
       </node>
@@ -335,6 +355,26 @@
               label="D"
               var_name="m_checkBox_5"
               id="ID_CHK_D" />
+          </node>
+        </node>
+        <node
+          class="wxBoxSizer"
+          var_name="box_sizer_3"
+          flags="wxEXPAND">
+          <node
+            class="wxStaticBoxSizer"
+            label="Reliability"
+            var_name="static_box_5">
+            <node
+              class="wxRadioButton"
+              label="BEST_EFFORT"
+              id="ID_CHK_BEST_EFFORT" />
+            <node
+              class="wxRadioButton"
+              checked="1"
+              label="RELIABLE"
+              var_name="m_radioBtn_2"
+              id="ID_CHK_RELIABLE" />
           </node>
         </node>
         <node
