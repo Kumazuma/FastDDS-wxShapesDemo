@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include <fastdds/dds/subscriber/DataReader.hpp>
+#include <atomic>
 #include "Model.h"
 
 class Subscriber
@@ -19,8 +20,17 @@ public:
 	ReturnCode_t GetSamples(eprosima::fastdds::dds::LoanableCollection& data_values, eprosima::fastdds::dds::SampleInfoSeq& sample_infos);
 	void ReturnLoan(eprosima::fastdds::dds::LoanableCollection& data_values, eprosima::fastdds::dds::SampleInfoSeq& sample_infos);
 	eprosima::fastdds::dds::InstanceHandle_t GetInstanceHandle() const;
+	void SetChanged(bool changed) { m_changed = changed;}
+	bool IsChanged() const { return m_changed; }
+	bool TrySetUnchanged()
+	{
+		bool expected = true;
+		return m_changed.compare_exchange_strong(expected, false);
+	}
+
 private:
 	ShapeKind m_shapeKind;
 	eprosima::fastdds::dds::DataReader* m_pDataReader;
 	DataReaderGetFunc m_getFunc;
+	std::atomic_bool m_changed;
 };

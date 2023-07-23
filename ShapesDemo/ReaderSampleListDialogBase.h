@@ -41,6 +41,7 @@ protected:
     wxDataViewColumn* m_dataViewColumn_2;
     wxDataViewColumn* m_dataViewColumn_3;
     wxDataViewColumn* m_dataViewColumn_4;
+    wxDataViewColumn* m_dataViewColumn_5;
     wxDataViewCtrl* m_dataViewCtrl;
 };
 

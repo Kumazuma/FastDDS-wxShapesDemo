@@ -46,7 +46,7 @@ void CanvasPanel::OnPoint(wxPaintEvent&)
 	auto& app = wxGetApp();
 	auto& model = app.GetModel();
 	std::unordered_map<wxString, wxBrush> brushTable;
-	for(auto& it: model.receivedShapeTable)
+	for(auto& it: model.shapeListTable)
 	{
 		auto& list = std::get<1>(it.second);
 		switch (std::get<0>(it.second))

@@ -13,6 +13,8 @@ EVT_RADIOBUTTON(ID_CHK_TRIANGLE, SubscriptionDialog::OnRadioShapeKind)
 EVT_RADIOBUTTON(ID_CHK_SQUARE, SubscriptionDialog::OnRadioShapeKind)
 EVT_RADIOBUTTON(ID_CHK_BEST_EFFORT, SubscriptionDialog::OnRadioReliability)
 EVT_RADIOBUTTON(ID_CHK_RELIABLE, SubscriptionDialog::OnRadioReliability)
+EVT_RADIOBUTTON(ID_CHK_USE_TAKE, SubscriptionDialog::OnRadioGetMethod)
+EVT_RADIOBUTTON(ID_CHK_USE_READ, SubscriptionDialog::OnRadioGetMethod)
 END_EVENT_TABLE()
 
 SubscriptionDialog::SubscriptionDialog(wxWindow* parent)
@@ -20,6 +22,7 @@ SubscriptionDialog::SubscriptionDialog(wxWindow* parent)
 	, m_shapeKind(ShapeKind::Circle)
 	, m_partition()
 	, m_reliabilityKind(ReliabilityQosPolicyKind::BEST_EFFORT_RELIABILITY_QOS)
+	, m_useTakeMethod(true)
 {
 
 }
@@ -37,6 +40,11 @@ uint8_t SubscriptionDialog::GetPartition() const
 ReliabilityQosPolicyKind SubscriptionDialog::GetReliabilityKind() const
 {
 	return m_reliabilityKind;
+}
+
+bool SubscriptionDialog::GetUseTakeMethod() const
+{
+	return m_useTakeMethod;
 }
 
 void SubscriptionDialog::OnChkPartition(wxCommandEvent& event)
@@ -103,6 +111,20 @@ void SubscriptionDialog::OnRadioReliability(wxCommandEvent& event)
 		break;
 	case ID_CHK_RELIABLE:
 		m_reliabilityKind = ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS;
+		break;
+	}
+}
+
+void SubscriptionDialog::OnRadioGetMethod(wxCommandEvent& event)
+{
+	switch(event.GetId())
+	{
+	case ID_CHK_USE_TAKE:
+		m_useTakeMethod = true;
+		break;
+
+	case ID_CHK_USE_READ:
+		m_useTakeMethod = false;
 		break;
 	}
 }

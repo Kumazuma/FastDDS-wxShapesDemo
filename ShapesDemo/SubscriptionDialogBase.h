@@ -40,7 +40,9 @@ public:
         ID_CHK_D,
         ID_CHK_RELIABLE,
         ID_CHK_SQUARE,
-        ID_CHK_TRIANGLE
+        ID_CHK_TRIANGLE,
+        ID_CHK_USE_READ,
+        ID_CHK_USE_TAKE
     };
 
 protected:
@@ -54,6 +56,8 @@ protected:
     wxCheckBox* m_checkBox_5;
     wxRadioButton* m_radioBtn;
     wxRadioButton* m_radioBtn_2;
+    wxRadioButton* m_radioBtn_3;
+    wxRadioButton* m_radioBtn_4;
     wxRadioButton* m_radioCircle;
     wxRadioButton* m_radioSquare;
     wxRadioButton* m_radioTriangle;

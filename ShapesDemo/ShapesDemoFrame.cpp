@@ -92,10 +92,11 @@ void ShapesDemoFrame::OnClickedSubscribe(wxCommandEvent&)
 	auto reliabilityKind = dialog.GetReliabilityKind();
 	auto& controller = wxGetApp().GetController();
 	auto qos = eprosima::fastdds::dds::DATAREADER_QOS_DEFAULT;
+	auto useTake = dialog.GetUseTakeMethod();
 	qos.reliability().kind = reliabilityKind;
-	qos.history().depth = 100;
+	qos.history().depth = 3;
 
-	auto ret =controller.CreateDataReader(shapeKind, qos, partition, false, false);
+	auto ret =controller.CreateDataReader(shapeKind, qos, partition, false, useTake);
 	if(!ret.has_value())
 	{
 		return;
@@ -131,8 +132,8 @@ void ShapesDemoFrame::OnActivatedEndpointsViewItem(wxDataViewEvent& event)
 {
 	EntityInfo* entityInfo = (EntityInfo*)m_dataViewListCtrl->GetItemData(event.GetItem());
 	auto& model = wxGetApp().GetModel();
-	auto it = model.receivedShapeTable.find(entityInfo->guid);
-	if(it == model.receivedShapeTable.end())
+	auto it = model.shapeListTable.find(entityInfo->guid);
+	if(it == model.shapeListTable.end())
 		return;
 
 	auto* pDialog = new ReaderSampleListDialog(this, wxID_ANY, entityInfo->guid);

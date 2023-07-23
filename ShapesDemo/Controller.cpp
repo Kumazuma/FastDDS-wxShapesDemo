@@ -11,6 +11,10 @@
 
 using namespace DirectX;
 
+Controller::Controller()
+{
+}
+
 void Controller::Init(int domainId)
 {
 	auto dpf = eprosima::fastdds::dds::DomainParticipantFactory::get_instance();
@@ -156,12 +160,12 @@ std::optional<eprosima::fastrtps::rtps::GUID_t> Controller::CreateDataReader(Sha
 		break;
 	}
 
-	auto dr = pSubscriber->create_datareader(pTopic, qos);
+	auto dr = pSubscriber->create_datareader(pTopic, qos, this, eprosima::fastdds::dds::StatusMask::data_available());
 	m_readers.push_back(new Subscriber(shapeKind, dr, useTake));
 	auto instanceHandle = eprosima::fastrtps::rtps::iHandle2GUID(dr->get_instance_handle());
 	auto& app = wxGetApp();
 	auto& model = app.GetModel();
-	model.receivedShapeTable.emplace(instanceHandle, std::make_tuple(shapeKind, std::vector<ReceivedShape>{ }));
+	model.shapeListTable.emplace(instanceHandle, std::make_tuple(shapeKind, std::vector<ReceivedShape>{ }));
 	auto it2 = model.entityInfoTable.emplace(instanceHandle, EntityInfo{});
 	auto& entity = it2.first->second;
 	entity.color = wxS("*");
@@ -350,38 +354,15 @@ void Controller::Update(float timeDelta)
 		writer->write(&msg);
 	}
 
-	// Receive
-	eprosima::fastdds::dds::LoanableSequence<::ShapeType> sequence;
-	eprosima::fastdds::dds::SampleInfoSeq sampleInfoSeq;
-	
-	for(auto reader: m_readers)
+	std::lock_guard<std::mutex> lockGuard{m_lockSamples};
+	for(auto& pair: model.shapeListTable)
 	{
-		auto ret = reader->GetSamples(sequence, sampleInfoSeq);
-		if(ret != ReturnCode_t::RETCODE_OK)
-		{
-			if(reader->useTake() && ret == ReturnCode_t::RETCODE_NO_DATA)
-			{
-				std::get<1>(model.receivedShapeTable.at(guid)).clear();
-			}
-
+		auto& newShapes = model.receivedShapeListTable[pair.first];
+		if(newShapes.empty())
 			continue;
-		}
 
-		const auto count = sequence.length();
-		std::vector<ReceivedShape> shapes;
-		shapes.reserve(count);
-		for(int i = 0; i < count; ++i)
-		{
-			auto& sampleInfo = sampleInfoSeq[i];
-			if(!sampleInfo.valid_data)
-				continue;
-
-			auto& data = sequence[i];
-			shapes.emplace_back(ReceivedShape{wxString::FromUTF8(data.color()), data.shapesize(), {(float)data.x(), (float)data.y()}, eprosima::fastrtps::rtps::iHandle2GUID(sampleInfo.publication_handle)});
-		}
-		auto guid = eprosima::fastrtps::rtps::iHandle2GUID(reader->GetInstanceHandle());
-		std::get<1>(model.receivedShapeTable.at(guid)).swap(shapes);
-		reader->ReturnLoan(sequence, sampleInfoSeq);
+		std::get<1>(pair.second).swap(newShapes);
+		newShapes.clear();
 	}
 }
 
@@ -398,4 +379,59 @@ void Controller::Shutdown()
 	m_pDomainParticipant->delete_topic(m_pTopicSquare);
 	auto dpf = eprosima::fastdds::dds::DomainParticipantFactory::get_instance();
 	dpf->delete_participant(m_pDomainParticipant);
+}
+
+void Controller::on_data_available(eprosima::fastdds::dds::DataReader* reader)
+{
+	auto& guid = reader->guid();
+	std::vector<ReceivedShape> shapes;
+	bool isUseTake = false;
+	{
+		std::shared_lock<std::shared_mutex> guard{m_lockReaders};
+		auto it = std::find_if(m_readers.begin(), m_readers.end(), [guid](Subscriber* sub) {return guid == sub->GetInstanceHandle();});
+		if(it == m_readers.end())
+			return;
+
+		auto* sub = *it;
+		isUseTake = sub->useTake();
+		// Receive
+		eprosima::fastdds::dds::LoanableSequence<::ShapeType> sequence(4096);
+		eprosima::fastdds::dds::SampleInfoSeq sampleInfoSeq(4096);
+		auto ret = sub->GetSamples(sequence, sampleInfoSeq);
+		if(ret == ReturnCode_t::RETCODE_OK)
+		{
+			const auto count = sequence.length();
+			shapes.reserve(count);
+			for(int i = 0; i < count; ++i)
+			{
+				auto& sampleInfo = sampleInfoSeq[i];
+				if(!sampleInfo.valid_data)
+					continue;
+
+				auto& data = sequence[i];
+				shapes.emplace_back(ReceivedShape{wxString::FromUTF8(data.color()), data.shapesize(), {(float)data.x(), (float)data.y()}, eprosima::fastrtps::rtps::iHandle2GUID(sampleInfo.publication_handle)});
+			}
+
+			sub->ReturnLoan(sequence, sampleInfoSeq);
+		}
+	}
+
+	auto& app = wxGetApp();
+	auto& model = app.GetModel();
+	if(app.IsMainLoopRunning())
+	{
+		std::lock_guard<std::mutex> lockGuard{m_lockSamples};
+		auto& list = model.receivedShapeListTable[guid];
+		if(isUseTake)
+		{
+			for(auto& shape: shapes)
+			{
+				list.push_back(shape);
+			}
+		}
+		else
+		{
+			list.swap(shapes);
+		}
+	}
 }

@@ -67,13 +67,24 @@ bool SubscriptionDialogBase::Create(wxWindow* parent, wxWindowID id, const wxStr
     auto* static_box_5 = new wxStaticBoxSizer(wxVERTICAL, this, "Reliability");
 
     m_radioBtn = new wxRadioButton(static_box_5->GetStaticBox(), ID_CHK_BEST_EFFORT, "BEST_EFFORT");
+    m_radioBtn->SetValue(true);
     static_box_5->Add(m_radioBtn, wxSizerFlags().Border(wxALL));
 
     m_radioBtn_2 = new wxRadioButton(static_box_5->GetStaticBox(), ID_CHK_RELIABLE, "RELIABLE");
-    m_radioBtn_2->SetValue(true);
     static_box_5->Add(m_radioBtn_2, wxSizerFlags().Border(wxALL));
 
     box_sizer_3->Add(static_box_5, wxSizerFlags().Border(wxALL));
+
+    auto* static_box = new wxStaticBoxSizer(wxVERTICAL, this, "Get Method");
+
+    m_radioBtn_3 = new wxRadioButton(static_box->GetStaticBox(), ID_CHK_USE_TAKE, "Take");
+    m_radioBtn_3->SetValue(true);
+    static_box->Add(m_radioBtn_3, wxSizerFlags().Border(wxALL));
+
+    m_radioBtn_4 = new wxRadioButton(static_box->GetStaticBox(), ID_CHK_USE_READ, "Read");
+    static_box->Add(m_radioBtn_4, wxSizerFlags().Border(wxALL));
+
+    box_sizer_3->Add(static_box, wxSizerFlags().Border(wxALL));
 
     dlg_sizer->Add(box_sizer_3, wxSizerFlags().Expand().Border(wxALL));
 

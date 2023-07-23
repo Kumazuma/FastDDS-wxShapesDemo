@@ -13,13 +13,16 @@ public:
 	ShapeKind GetShapeKind() const;
 	uint8_t GetPartition() const;
 	ReliabilityQosPolicyKind GetReliabilityKind() const;
+	bool GetUseTakeMethod() const;
 protected:
 	void OnChkPartition(wxCommandEvent&);
 	void OnRadioShapeKind(wxCommandEvent&);
 	void OnRadioReliability(wxCommandEvent&);
+	void OnRadioGetMethod(wxCommandEvent&);
 private:
 	wxString m_selectedColor;
 	uint8_t m_partition;
 	ShapeKind m_shapeKind;
 	ReliabilityQosPolicyKind  m_reliabilityKind;
+	bool m_useTakeMethod;
 };

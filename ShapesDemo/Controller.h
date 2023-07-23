@@ -1,6 +1,7 @@
 #pragma once
 #include <wx/wx.h>
 #include <map>
+#include <shared_mutex>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
@@ -9,9 +10,10 @@
 #include "Model.h"
 #include "Subscriber.h"
 
-class Controller
+class Controller: public eprosima::fastdds::dds::DataReaderListener
 {
 public:
+	Controller();
 	void Init(int domainId);
 
 	std::optional<eprosima::fastrtps::rtps::GUID_t> CreateDataWriter(
@@ -29,6 +31,8 @@ public:
 	void Update(float timeDelta);
 
 	void Shutdown();
+
+	void on_data_available(eprosima::fastdds::dds::DataReader* reader) override;
 private:
 	eprosima::fastdds::dds::DomainParticipant* m_pDomainParticipant;
 	eprosima::fastdds::dds::TypeSupport m_pTypeSupport;
@@ -40,4 +44,6 @@ private:
 	std::unordered_map<uint8_t, eprosima::fastdds::dds::Subscriber*> m_subscriberTable;
 	std::vector<eprosima::fastdds::dds::DataWriter*> m_writers;
 	std::vector<Subscriber*> m_readers;
+	std::shared_mutex m_lockReaders;
+	std::mutex m_lockSamples;
 };

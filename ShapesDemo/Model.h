@@ -44,7 +44,8 @@ struct EntityInfo
 class Model
 {
 public:
-	std::map<eprosima::fastrtps::rtps::GUID_t, std::tuple<ShapeKind, std::vector<ReceivedShape>>> receivedShapeTable;
+	std::map<eprosima::fastrtps::rtps::GUID_t, std::tuple<ShapeKind, std::vector<ReceivedShape>>> shapeListTable;
+	std::map<eprosima::fastrtps::rtps::GUID_t, std::vector<ReceivedShape>> receivedShapeListTable;
 	std::map<eprosima::fastrtps::rtps::GUID_t, std::tuple<ShapeKind, SendingShape>> sendingShapes;
 	std::map<eprosima::fastrtps::rtps::GUID_t, wxRect> contentFilterAreaRects;
 	std::map<eprosima::fastrtps::rtps::GUID_t, EntityInfo> entityInfoTable;

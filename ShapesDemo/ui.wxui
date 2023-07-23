@@ -367,14 +367,29 @@
             var_name="static_box_5">
             <node
               class="wxRadioButton"
+              checked="1"
               label="BEST_EFFORT"
               id="ID_CHK_BEST_EFFORT" />
             <node
               class="wxRadioButton"
-              checked="1"
               label="RELIABLE"
               var_name="m_radioBtn_2"
               id="ID_CHK_RELIABLE" />
+          </node>
+          <node
+            class="wxStaticBoxSizer"
+            label="Get Method">
+            <node
+              class="wxRadioButton"
+              checked="1"
+              label="Take"
+              var_name="m_radioBtn_3"
+              id="ID_CHK_USE_TAKE" />
+            <node
+              class="wxRadioButton"
+              label="Read"
+              var_name="m_radioBtn_4"
+              id="ID_CHK_USE_READ" />
           </node>
         </node>
         <node
@@ -401,21 +416,26 @@
           proportion="1">
           <node
             class="dataViewColumn"
-            label="Color" />
+            label="Publication"
+            var_name="m_dataViewColumn_5" />
+          <node
+            class="dataViewColumn"
+            label="Color"
+            model_column="1" />
           <node
             class="dataViewColumn"
             label="ShapeSize"
-            model_column="1"
+            model_column="2"
             var_name="m_dataViewColumn_2" />
           <node
             class="dataViewColumn"
             label="X"
-            model_column="2"
+            model_column="3"
             var_name="m_dataViewColumn_3" />
           <node
             class="dataViewColumn"
             label="Y"
-            model_column="3"
+            model_column="4"
             var_name="m_dataViewColumn_4" />
         </node>
       </node>

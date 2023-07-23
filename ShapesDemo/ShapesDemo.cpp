@@ -22,25 +22,21 @@ bool ShapesDemoApp::OnInit()
 		if(m_pTimer != nullptr)
 		{
 			m_pTimer->Stop();
+			delete m_pTimer;
 		}
 
 		m_pFrame = nullptr;
+		m_controller.Shutdown();
 	});
 	m_pTimer = new wxTimer(this);
-	m_pTimer->Start(16);
+	m_pTimer->Start(1000 / 30);
 	Bind(wxEVT_TIMER, &ShapesDemoApp::OnTimer, this);
 	return true;
 }
 
 int ShapesDemoApp::OnExit()
 {
-	if(m_pTimer != nullptr)
-	{
-		delete m_pTimer;
-	}
-	
 	int ret = wxApp::OnExit();
-	m_controller.Shutdown();
 	return ret;
 }
 
@@ -59,7 +55,7 @@ void ShapesDemoApp::OnTimer(wxTimerEvent&)
 	if(m_pFrame == nullptr)
 		return;
 
-	m_controller.Update(16.f / 1000.f);
+	m_controller.Update(1.f / 30.f);
 	m_pFrame->UpdateView();
 
 }

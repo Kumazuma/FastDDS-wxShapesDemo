@@ -22,16 +22,19 @@ bool ReaderSampleListDialogBase::Create(wxWindow* parent, wxWindowID id, const w
     m_dataViewCtrl = new wxDataViewCtrl(this, ID_DATAVIEW);
     dlg_sizer->Add(m_dataViewCtrl, wxSizerFlags(1).Expand().Border(wxALL));
 
-    m_dataViewColumn = m_dataViewCtrl->AppendTextColumn("Color", 0, wxDATAVIEW_CELL_INERT, -1,
+    m_dataViewColumn_5 = m_dataViewCtrl->AppendTextColumn("Publication", 0, wxDATAVIEW_CELL_INERT, -1,
         static_cast<wxAlignment>(wxALIGN_LEFT), wxDATAVIEW_COL_RESIZABLE);
 
-    m_dataViewColumn_2 = m_dataViewCtrl->AppendTextColumn("ShapeSize", 1, wxDATAVIEW_CELL_INERT, -1,
+    m_dataViewColumn = m_dataViewCtrl->AppendTextColumn("Color", 1, wxDATAVIEW_CELL_INERT, -1,
         static_cast<wxAlignment>(wxALIGN_LEFT), wxDATAVIEW_COL_RESIZABLE);
 
-    m_dataViewColumn_3 = m_dataViewCtrl->AppendTextColumn("X", 2, wxDATAVIEW_CELL_INERT, -1,
+    m_dataViewColumn_2 = m_dataViewCtrl->AppendTextColumn("ShapeSize", 2, wxDATAVIEW_CELL_INERT, -1,
         static_cast<wxAlignment>(wxALIGN_LEFT), wxDATAVIEW_COL_RESIZABLE);
 
-    m_dataViewColumn_4 = m_dataViewCtrl->AppendTextColumn("Y", 3, wxDATAVIEW_CELL_INERT, -1,
+    m_dataViewColumn_3 = m_dataViewCtrl->AppendTextColumn("X", 3, wxDATAVIEW_CELL_INERT, -1,
+        static_cast<wxAlignment>(wxALIGN_LEFT), wxDATAVIEW_COL_RESIZABLE);
+
+    m_dataViewColumn_4 = m_dataViewCtrl->AppendTextColumn("Y", 4, wxDATAVIEW_CELL_INERT, -1,
         static_cast<wxAlignment>(wxALIGN_LEFT), wxDATAVIEW_COL_RESIZABLE);
 
     SetSizer(dlg_sizer);

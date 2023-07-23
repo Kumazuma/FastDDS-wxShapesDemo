@@ -6,8 +6,6 @@
 class ReaderSampleListModel: public wxDataViewModel
 {
 	enum class ItemKind;
-	struct InternalListItem;
-	struct InternalWriterGuidItem;
 	struct InternalSampleItem;
 public:
 	ReaderSampleListModel(const eprosima::fastrtps::rtps::GUID_t& guid);
@@ -20,32 +18,16 @@ public:
 	void Update();
 private:
 	const eprosima::fastrtps::rtps::GUID_t m_guid;
-	std::vector<InternalListItem*> m_children;
+	std::vector<InternalSampleItem*> m_table;
 };
 
-enum class ReaderSampleListModel::ItemKind
+struct ReaderSampleListModel::InternalSampleItem
 {
-	WRITER_GUID,
-	SAMPLE_DATA
-};
-
-struct ReaderSampleListModel::InternalListItem
-{
-	ItemKind kind;
-};
-
-struct ReaderSampleListModel::InternalSampleItem: public InternalListItem
-{
-	eprosima::fastrtps::rtps::GUID_t publications;
+	eprosima::fastrtps::rtps::GUID_t guid;
 	wxString color;
 	int x;
 	int y;
 	int itemSize;
-};
-
-struct ReaderSampleListModel::InternalWriterGuidItem: public InternalListItem
-{
-	eprosima::fastrtps::rtps::GUID_t guid;
 };
 
 ReaderSampleListModel::ReaderSampleListModel(const eprosima::fastrtps::rtps::GUID_t& guid)
@@ -56,57 +38,23 @@ ReaderSampleListModel::ReaderSampleListModel(const eprosima::fastrtps::rtps::GUI
 
 ReaderSampleListModel::~ReaderSampleListModel()
 {
-	for(auto& it: m_children)
+	for(auto item : m_table)
 	{
-		delete it;
+		delete item;
 	}
 }
 
 unsigned ReaderSampleListModel::GetChildren(const wxDataViewItem& item, wxDataViewItemArray& children) const
 {
 	eprosima::fastrtps::rtps::GUID_t publicationGuid;
-	auto it = m_children.begin();
-	const auto end = m_children.end();
 	if(item.IsOk())
 	{
-		auto listItem = static_cast<InternalListItem*>(item.GetID());
-		if(listItem->kind == ItemKind::SAMPLE_DATA)
-			return 0;
-
-		publicationGuid = static_cast<InternalWriterGuidItem*>(listItem)->guid;
-		it = std::find_if(it, m_children.end(), [publicationGuid](InternalListItem* it)
-		{
-			if(it->kind == ItemKind::WRITER_GUID)
-				return false;
-
-			auto sampleItem = static_cast<InternalSampleItem*>(it);
-			if(sampleItem->publications == publicationGuid)
-				return true;
-		});
-
-		for(; it != end; ++it)
-		{
-			listItem = *it;
-			if(listItem->kind == ItemKind::WRITER_GUID)
-				continue;
-
-			auto sampleItem = static_cast<InternalSampleItem*>(listItem);
-			if(sampleItem->publications != publicationGuid)
-				continue;
-
-			children.push_back(wxDataViewItem{sampleItem});
-		}
+		return 0;
 	}
-	else
+	
+	for(auto it: m_table)
 	{
-		for(; it != end; ++it)
-		{
-			auto listItem = *it;
-			if(listItem->kind == ItemKind::SAMPLE_DATA)
-				continue;
-
-			children.push_back(wxDataViewItem{listItem});
-		}
+		children.push_back(wxDataViewItem{it});
 	}
 
 	return children.size();
@@ -114,26 +62,6 @@ unsigned ReaderSampleListModel::GetChildren(const wxDataViewItem& item, wxDataVi
 
 wxDataViewItem ReaderSampleListModel::GetParent(const wxDataViewItem& item) const
 {
-	if(!item.IsOk())
-		return {};
-
-	const auto listItem = static_cast<InternalListItem*>(item.GetID());
-	if(listItem->kind == ItemKind::SAMPLE_DATA)
-	{
-		const auto sampleItem = static_cast<InternalSampleItem*>(listItem);
-		for(auto& it: m_children)
-		{
-			if(it->kind == ItemKind::SAMPLE_DATA)
-				continue;
-
-			const auto writerGuidItem = static_cast<InternalWriterGuidItem*>(it);
-			if(writerGuidItem->guid != sampleItem->publications)
-				continue;
-
-			return wxDataViewItem{writerGuidItem};
-		}
-	}
-
 	return {};
 }
 
@@ -142,70 +70,55 @@ void ReaderSampleListModel::GetValue(wxVariant& variant, const wxDataViewItem& i
 	if(!item.IsOk())
 		return;
 
-	const auto listItem = static_cast<InternalListItem*>(item.GetID());
-	switch(listItem->kind)
+	auto sampleItem = static_cast<InternalSampleItem*>(item.GetID());
+	switch(col)
 	{
-	case ItemKind::WRITER_GUID:
+	case 0:
 		{
-			auto guidItem = static_cast<InternalWriterGuidItem*>(listItem);
 			wxString guidStr;
 			for(int i = 0; i < 12; ++i)
 			{
-				guidStr += wxString::Format(wxS("%02X"), guidItem->guid.guidPrefix.value[i]);
+				guidStr += wxString::Format(wxS("%02X"), sampleItem->guid.guidPrefix.value[i]);
 				if(i % 4 == 3)
 					guidStr += wxS('-');
 			}
 
 			for(int i = 0; i < 4; ++i)
 			{
-				guidStr += wxString::Format(wxS("%02X"), guidItem->guid.entityId.value[i]);
+				guidStr += wxString::Format(wxS("%02X"), sampleItem->guid.entityId.value[i]);
 			}
 
 			variant = guidStr;
 		}
 		break;
-	case ItemKind::SAMPLE_DATA:
-		{
-			auto sampleItem = static_cast<InternalSampleItem*>(listItem);
-			switch(col)
-			{
-			case 0:
-				variant = sampleItem->color;
-				break;
+	case 1:
+		variant = sampleItem->color;
+		break;
 
-			case 1:
-				variant = wxString::Format(wxS("%d"), sampleItem->itemSize);
-				break;
+	case 2:
+		variant = wxString::Format(wxS("%d"), sampleItem->itemSize);
+		break;
 
-			case 2:
-				variant = wxString::Format(wxS("%d"), sampleItem->x);
-				break;
+	case 3:
+		variant = wxString::Format(wxS("%d"), sampleItem->x);
+		break;
 
-			case 3:
-				variant = wxString::Format(wxS("%d"), sampleItem->y);
-				break;
-			}	
-		}
-		
-
+	case 4:
+		variant = wxString::Format(wxS("%d"), sampleItem->y);
 		break;
 	}
 }
 
 bool ReaderSampleListModel::IsContainer(const wxDataViewItem& item) const
 {
-	if(!item.IsOk())
-		return true;
-
-	const auto listItem = static_cast<InternalListItem*>(item.GetID());
-	return listItem->kind == ItemKind::WRITER_GUID;
+	return !item.IsOk();
 }
 
 void ReaderSampleListModel::Update()
 {
 	auto& model = wxGetApp().GetModel();
 	const std::vector<ReceivedShape>* pReceivedShapes;
-	if(auto it = model.receivedShapeTable.find(m_guid); it != model.receivedShapeTable.end())
+	if(auto it = model.shapeListTable.find(m_guid); it != model.shapeListTable.end())
 	{
 		pReceivedShapes = &std::get<1>(it->second);
 	}
@@ -214,119 +127,53 @@ void ReaderSampleListModel::Update()
 		return;
 	}
 
-	// Remove Handle;
-	std::vector<InternalWriterGuidItem*> removingItem;
-	std::map<eprosima::fastrtps::rtps::GUID_t, std::tuple<InternalWriterGuidItem*, std::vector<InternalSampleItem*>>> numberOfChildrenTable; // old, new
-
-	removingItem.reserve(m_children.size());
-	for(auto* item: m_children)
-	{
-		if(item->kind == ItemKind::SAMPLE_DATA)
-			continue;
-			
-
-		const auto& writerGuid = static_cast<InternalWriterGuidItem*>(item)->guid;
-		auto it = std::find_if(pReceivedShapes->begin(), pReceivedShapes->end(), [writerGuid](const ReceivedShape& shape)
-		{
-			return shape.publicationGuid == writerGuid;
-		});
-
-		if(it != pReceivedShapes->end())
-		{
-			numberOfChildrenTable.emplace(writerGuid, std::make_tuple(static_cast<InternalWriterGuidItem*>(item), std::vector<InternalSampleItem*>{}));
-			continue;
-		}
-
-		removingItem.push_back(static_cast<InternalWriterGuidItem*>(item));
-	}
-
 	wxDataViewItemArray items;
-	for(auto* item: removingItem)
+	const auto minCount = std::min(m_table.size(), pReceivedShapes->size());
+	if(m_table.size() > pReceivedShapes->size())
 	{
+		auto it = m_table.begin() + pReceivedShapes->size();
+		while(it != m_table.end())
+		{
+			auto item = *it;
+			delete item;
+			items.push_back(wxDataViewItem{item});
+			it = m_table.erase(it);
+		}
+
+		ItemsDeleted({}, items);
 		items.clear();
-		wxDataViewItem parent{item};
-
-		auto it = m_children.begin();
-		while (it != m_children.end())
-		{
-			auto pItem = *it;
-			bool removed = false;
-			if(pItem->kind == ItemKind::WRITER_GUID && static_cast<InternalWriterGuidItem*>(pItem)->guid == item->guid)
-			{
-				removed = true;
-			}
-			else if(pItem->kind == ItemKind::SAMPLE_DATA && static_cast<InternalSampleItem*>(pItem)->publications == item->guid)
-			{
-				removed = true;
-				items.push_back(wxDataViewItem{pItem});
-			}
-
-			if(removed)
-			{
-				it = m_children.erase(it);
-				delete pItem;
-			}
-			else
-			{
-				++it;
-			}
-		}
-
-		ItemsDeleted(parent, items);
-		ItemDeleted({}, parent);
 	}
-
-	for(auto* item: m_children)
+	else if(m_table.size() < pReceivedShapes->size())
 	{
-		if(item->kind == ItemKind::WRITER_GUID)
-			continue;
-
-		auto pItem = static_cast<InternalSampleItem*>(item);
-		std::get<1>(numberOfChildrenTable[pItem->publications]).push_back(pItem);
-	}
-	
-	removingItem.clear();
-	removingItem.shrink_to_fit();
-	// Add Items
-	items.clear();
-	for(auto& shape: *pReceivedShapes)
-	{
-		InternalWriterGuidItem* parent = nullptr;
-		auto it = numberOfChildrenTable.find(shape.publicationGuid);
-		if(it == numberOfChildrenTable.end())
+		auto it = pReceivedShapes->begin() + m_table.size();
+		auto end = pReceivedShapes->end();
+		for(; it != end; ++it)
 		{
-			parent = new InternalWriterGuidItem{};
-			parent->kind = ItemKind::WRITER_GUID;
-			parent->guid = shape.publicationGuid;
-			m_children.push_back(parent);
-			it = numberOfChildrenTable.emplace(shape.publicationGuid, std::make_tuple(parent, std::vector<InternalSampleItem*>{})).first;
-			ItemAdded(wxDataViewItem{}, wxDataViewItem{parent});
-		}
-
-		parent = std::get<0>(it->second);
-		auto& children = std::get<1>(it->second);
-		if(children.empty())
-		{
+			const auto& shape = *it;
 			auto newItem = new InternalSampleItem{};
-			newItem->kind = ItemKind::SAMPLE_DATA;
 			newItem->color = shape.rgb;
 			newItem->x = shape.pos.x;
 			newItem->y = shape.pos.y;
 			newItem->itemSize = shape.size;
-			newItem->publications = shape.publicationGuid;
-			m_children.push_back(newItem);
-			ItemAdded(wxDataViewItem{parent}, wxDataViewItem{newItem});
+			newItem->guid = shape.publicationGuid;
+			m_table.push_back(newItem);
+			items.push_back(wxDataViewItem{newItem});
 		}
-		else
-		{
-			auto item = children.front();
-			children.erase(children.begin());
-			item->color = shape.rgb;
-			item->x = shape.pos.x;
-			item->y = shape.pos.y;
-			item->itemSize = shape.size;
-			items.push_back(wxDataViewItem{item});
-		}
+
+		ItemsAdded({}, items);
+		items.clear();
+	}
+
+	for(auto i = 0; i < minCount; ++i)
+	{
+		auto* item = m_table[i];
+		auto& shape = (*pReceivedShapes)[i];
+		item->color = shape.rgb;
+		item->x = shape.pos.x;
+		item->y = shape.pos.y;
+		item->itemSize = shape.size;
+		item->guid = shape.publicationGuid;
+		items.push_back(wxDataViewItem{item});
 	}
 
 	ItemsChanged(items);
