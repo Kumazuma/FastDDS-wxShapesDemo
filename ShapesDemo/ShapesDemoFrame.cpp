@@ -45,7 +45,6 @@ void ShapesDemoFrame::OnClickedPublish(wxCommandEvent&)
 	
 	auto dwQos = eprosima::fastdds::dds::DATAWRITER_QOS_DEFAULT;
 	dwQos.reliability().kind = reliabilityKind;
-
 	auto ret = controller.CreateDataWriter(shapeKind, dwQos, partition, color);
 	if(!ret.has_value())
 	{
@@ -95,8 +94,7 @@ void ShapesDemoFrame::OnClickedSubscribe(wxCommandEvent&)
 	auto useTake = dialog.GetUseTakeMethod();
 	qos.reliability().kind = reliabilityKind;
 	qos.history().depth = 3;
-
-	auto ret =controller.CreateDataReader(shapeKind, qos, partition, false, useTake);
+	auto ret = controller.CreateDataReader(shapeKind, qos, partition, false, useTake);
 	if(!ret.has_value())
 	{
 		return;

@@ -10,7 +10,8 @@
 #include "Model.h"
 #include "Subscriber.h"
 
-class Controller: public eprosima::fastdds::dds::DataReaderListener
+class wxDdsEvent;
+class Controller: public wxEvtHandler, public eprosima::fastdds::dds::DataReaderListener
 {
 public:
 	Controller();
@@ -33,6 +34,10 @@ public:
 	void Shutdown();
 
 	void on_data_available(eprosima::fastdds::dds::DataReader* reader) override;
+
+protected:
+	void OnReceivedSamples(wxDdsEvent&);
+
 private:
 	eprosima::fastdds::dds::DomainParticipant* m_pDomainParticipant;
 	eprosima::fastdds::dds::TypeSupport m_pTypeSupport;
@@ -47,3 +52,25 @@ private:
 	std::shared_mutex m_lockReaders;
 	std::mutex m_lockSamples;
 };
+
+class wxDdsEvent: public wxThreadEvent
+{
+public:
+	wxDdsEvent(wxEventType eventType, wxWindowID id = wxID_ANY)
+		: wxThreadEvent(eventType, id)
+	, m_relatedEntityGuid{}
+	{
+		
+	}
+
+	const eprosima::fastrtps::rtps::GUID_t& GetRelatedEntityGuid() const { return m_relatedEntityGuid; }
+	void SetRelatedEntityGuid(const eprosima::fastrtps::rtps::GUID_t& guid)
+	{
+		m_relatedEntityGuid = guid;
+	}
+private:
+	eprosima::fastrtps::rtps::GUID_t m_relatedEntityGuid;
+
+};
+
+wxDECLARE_EVENT(wxEVT_RECEIVED_SAMPLES, wxDdsEvent);

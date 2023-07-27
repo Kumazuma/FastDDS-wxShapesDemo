@@ -10,6 +10,7 @@
 #include "Shape.h"
 
 using namespace DirectX;
+wxDEFINE_EVENT(wxEVT_RECEIVED_SAMPLES, wxDdsEvent);
 
 Controller::Controller()
 {
@@ -26,6 +27,7 @@ void Controller::Init(int domainId)
 	m_pTopicCircle = m_pDomainParticipant->create_topic("Circle", typeName, topicQos);
 	m_pTopicTriangle = m_pDomainParticipant->create_topic("Triangle", typeName, topicQos);
 	m_pTopicSquare = m_pDomainParticipant->create_topic("Square", typeName, topicQos);
+	Bind(wxEVT_RECEIVED_SAMPLES, &Controller::OnReceivedSamples, this);
 }
 
 std::optional<eprosima::fastrtps::rtps::GUID_t> Controller::CreateDataWriter(
@@ -353,17 +355,6 @@ void Controller::Update(float timeDelta)
 		msg.y(shape.pos.y);
 		writer->write(&msg);
 	}
-
-	std::lock_guard<std::mutex> lockGuard{m_lockSamples};
-	for(auto& pair: model.shapeListTable)
-	{
-		auto& newShapes = model.receivedShapeListTable[pair.first];
-		if(newShapes.empty())
-			continue;
-
-		std::get<1>(pair.second).swap(newShapes);
-		newShapes.clear();
-	}
 }
 
 void Controller::Shutdown()
@@ -385,7 +376,6 @@ void Controller::on_data_available(eprosima::fastdds::dds::DataReader* reader)
 {
 	auto& guid = reader->guid();
 	std::vector<ReceivedShape> shapes;
-	bool isUseTake = false;
 	{
 		std::shared_lock<std::shared_mutex> guard{m_lockReaders};
 		auto it = std::find_if(m_readers.begin(), m_readers.end(), [guid](Subscriber* sub) {return guid == sub->GetInstanceHandle();});
@@ -393,7 +383,6 @@ void Controller::on_data_available(eprosima::fastdds::dds::DataReader* reader)
 			return;
 
 		auto* sub = *it;
-		isUseTake = sub->useTake();
 		// Receive
 		eprosima::fastdds::dds::LoanableSequence<::ShapeType> sequence(4096);
 		eprosima::fastdds::dds::SampleInfoSeq sampleInfoSeq(4096);
@@ -416,22 +405,22 @@ void Controller::on_data_available(eprosima::fastdds::dds::DataReader* reader)
 		}
 	}
 
+	auto* event = new wxDdsEvent(wxEVT_RECEIVED_SAMPLES);
+	event->SetRelatedEntityGuid(reader->guid());
+	event->SetPayload(std::shared_ptr<std::vector<ReceivedShape>>{new std::vector<ReceivedShape>{std::move(shapes)}});
+	QueueEvent(event);
+}
+
+void Controller::OnReceivedSamples(wxDdsEvent& event)
+{
+	const auto& guid = event.GetRelatedEntityGuid();
 	auto& app = wxGetApp();
 	auto& model = app.GetModel();
-	if(app.IsMainLoopRunning())
-	{
-		std::lock_guard<std::mutex> lockGuard{m_lockSamples};
-		auto& list = model.receivedShapeListTable[guid];
-		if(isUseTake)
-		{
-			for(auto& shape: shapes)
-			{
-				list.push_back(shape);
-			}
-		}
-		else
-		{
-			list.swap(shapes);
-		}
-	}
+	auto it = model.shapeListTable.find(guid);
+	if(it == model.shapeListTable.end())
+		return;
+
+	auto list = event.GetPayload<std::shared_ptr<std::vector<ReceivedShape>>>();
+	std::get<1>(it->second) = std::move(*list);
+	app.UpdateView();
 }

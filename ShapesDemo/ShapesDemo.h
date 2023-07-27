@@ -16,7 +16,7 @@ public:
 	int OnExit() override;
 	Model& GetModel();
 	Controller& GetController();
-
+	void UpdateView();
 protected:
 	void OnTimer(wxTimerEvent&);
 private:
